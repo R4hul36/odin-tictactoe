@@ -1,55 +1,69 @@
-
-
 const gameBoard = (function () {
-  const cells = ["x", "", "", "x", "", "", "x", "", ""];
-  
+  const cells = ['x', '', '', 'x', '', '', 'x', '', '']
+
   const updateCells = (symbol, position) => {
-    if(cells[position].length){
+    if (cells[position].length) {
       return
-    }else {
-      return cells[position] = symbol
+    } else {
+      return (cells[position] = symbol)
     }
-    
   }
-  return {cells, updateCells}
+  return { cells, updateCells }
+})()
 
-})() 
-
-
-
-// 
-
-// gameBoard.updateCells("o", 2);
-
-// console.log(gameBoard.cells);
+//
 
 const player = function (symbol) {
-  return {symbol}
+  return { symbol }
 }
 
-const gameController = (function () {
+const switchTurn = (function () {
+  const currSymbol = (sym) => {
+    let { symbol } = sym
+    console.log(symbol)
+    symbol = symbol === 'x' ? 'o' : 'x'
 
-  const winningCombination = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
+    return symbol
+  }
+  return { currSymbol }
+})()
+
+const player1 = player('x')
+const player2 = player('o')
+
+// console.log(switchTurn.currSymbol(player1))
+console.log(switchTurn.currSymbol(player1))
+
+const gameController = (function () {
+  const winningCombination = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ]
   const currentCells = gameBoard.cells
 
   const checkWinner = (currSymbol) => {
-    let winner = "none";
+    let winner = 'none'
     winningCombination.map((combo) => {
-      const checkCombo = combo.every((cell) => currentCells[cell] === currSymbol)
-      if(checkCombo) {
-        winner = currSymbol;
+      const checkCombo = combo.every(
+        (cell) => currentCells[cell] === currSymbol
+      )
+      if (checkCombo) {
+        winner = currSymbol
       }
-    }
-    )
-    return winner;
+    })
+    return winner
   }
 
-  return {checkWinner}
+  return { checkWinner }
 })()
 
-console.log(gameController.checkWinner('x'));
-
-
+console.log(gameController.checkWinner('x'))
 
 // const player1 = player("x")
 // const player2 = player('o')
