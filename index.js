@@ -9,11 +9,11 @@ const gameBoard = (function () {
     }
   }
 
-  const clearCells =() =>{
-    cells = ['', '', '', '', '', '', '', '', '']
-    return
+  const resetBoard = () => {
+    return cells.forEach((cell, index) => (cells[index] = ''))
   }
-  return { cells, updateCells, clearCells }
+
+  return { cells, updateCells, resetBoard }
 })()
 
 //
@@ -24,7 +24,6 @@ const player = function (symbol) {
 
 const switchTurn = (function () {
   const currSymbol = (symbol) => {
-    
     symbol = symbol === 'x' ? 'o' : 'x'
 
     return symbol
@@ -71,56 +70,41 @@ const gameController = (function () {
   return { checkWinner, checkDraw }
 })()
 
-console.log(gameController.checkWinner('x'))
-
-// const player1 = player("x")
-// const player2 = player('o')
-
-// console.log(player1.symbol)
-// console.log(player2.symbol);
-
-// gameBoard.updateCells(player1.symbol, 2);
-
-// console.log(gameController.checkWinner());
-
-// gameBoard.updateCells(player2.symbol, 3);
-
-// console.log(gameBoard.cells);
-
-
 const domController = (function () {
+  let symbol = 'x'
 
-  let symbol = "x"
+  const resetDom = () =>
+    document
+      .querySelectorAll('.game-cell')
+      .forEach((cell) => (cell.textContent = ''))
 
-  document.querySelectorAll(".game-cell").forEach((cell) => {
-  cell.addEventListener('click', (e) => {
-    if(e.target.textContent !== "") {
-      return
-    }
-    e.target.textContent = symbol
-    const index = Number(e.target.dataset.cell);
-    console.log(index);
-    gameBoard.updateCells(symbol, index)
-    const winner = gameController.checkWinner(symbol)
-    const isDraw = gameController.checkDraw();
+  document.querySelectorAll('.game-cell').forEach((cell) => {
+    cell.addEventListener('click', (e) => {
+      if (e.target.textContent !== '') {
+        return
+      }
 
-    const resetDom = () => document.querySelectorAll('.game-cell').forEach(cell => cell.textContent = "");
+      e.target.textContent = symbol
+      const index = Number(e.target.dataset.cell)
+      console.log(index)
+      gameBoard.updateCells(symbol, index)
+      let winner = gameController.checkWinner(symbol)
+      console.log(winner)
 
-    if(winner) {
-      alert(`Player ${symbol} win!!`)
-      resetDom()
-      gameBoard.clearCells()
-      return
-    }else if(isDraw) {
-      alert("The game is a draw!!")
-    }
-    symbol=switchTurn.currSymbol(symbol)
-   
-    console.log(gameBoard.cells);
-    
-    
+      const isDraw = gameController.checkDraw()
+
+      if (winner) {
+        alert(`Player ${symbol} win!!`)
+        resetDom()
+        gameBoard.resetBoard()
+        console.log(gameBoard.cells)
+        return
+      } else if (isDraw) {
+        alert('The game is a draw!!')
+      }
+      symbol = switchTurn.currSymbol(symbol)
+
+      console.log(gameBoard.cells)
+    })
   })
-}
-)
 })()
-
