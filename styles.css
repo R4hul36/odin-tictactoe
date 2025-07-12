@@ -6,4 +6,24 @@
 
 body {
   background-color: aliceblue;
+  text-align: center;
+}
+
+h1 {
+  margin: 40px 0px;
+}
+
+.game-container {
+  width: 400px;
+  height: 400px;
+  background-color: white;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: auto;
+
+}
+
+.game-cell {
+  border: 1px solid black;
+  border-collapse: separate;
 }

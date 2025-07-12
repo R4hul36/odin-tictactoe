@@ -78,3 +78,16 @@ console.log(gameController.checkWinner('x'))
 // gameBoard.updateCells(player2.symbol, 3);
 
 // console.log(gameBoard.cells);
+
+
+const domController = (function () {
+  document.querySelectorAll(".game-cell").forEach((cell) => {
+  cell.addEventListener('click', (e) => {
+    const index = e.target.dataset.cell;
+    console.log(index);
+    
+  })
+}
+)
+})()
+
