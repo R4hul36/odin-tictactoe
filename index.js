@@ -84,7 +84,13 @@ const domController = (function () {
         return
       }
 
-      e.target.textContent = symbol
+      const playerSymbol = document.createElement('p')
+      playerSymbol.textContent = symbol
+      playerSymbol.style.color = 'white'
+      playerSymbol.style.fontSize = '3.8rem'
+      playerSymbol.style.fontWeight = '500'
+      cell.appendChild(playerSymbol)
+
       const index = Number(e.target.dataset.cell)
       console.log(index)
       gameBoard.updateCells(symbol, index)
@@ -93,16 +99,20 @@ const domController = (function () {
 
       const isDraw = gameController.checkDraw()
 
-      if (winner) {
-        alert(`Player ${symbol} win!!`)
-        resetDom()
-        gameBoard.resetBoard()
-        console.log(gameBoard.cells)
-        return
-      } else if (isDraw) {
-        alert('The game is a draw!!')
-      }
-      symbol = switchTurn.currSymbol(symbol)
+      setTimeout(() => {
+        if (winner) {
+          alert(`Player ${symbol} win!!`)
+          resetDom()
+          gameBoard.resetBoard()
+          console.log(gameBoard.cells)
+          return
+        } else if (isDraw) {
+          alert('The game is a draw!!')
+          resetDom()
+          gameBoard.resetBoard()
+        }
+        symbol = switchTurn.currSymbol(symbol)
+      }, 100)
 
       console.log(gameBoard.cells)
     })
