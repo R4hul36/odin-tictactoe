@@ -24,7 +24,7 @@ const player = function (symbol) {
 
 const switchTurn = (function () {
   const currSymbol = (symbol) => {
-    symbol = symbol === 'x' ? 'o' : 'x'
+    symbol = symbol === 'X' ? 'O' : 'X'
 
     return symbol
   }
@@ -52,15 +52,17 @@ const gameController = (function () {
 
   const checkWinner = (currSymbol) => {
     let winner = false
+    let winningCombo;
     winningCombination.map((combo) => {
       const checkCombo = combo.every(
         (cell) => currentCells[cell] === currSymbol
       )
       if (checkCombo) {
         winner = true
+        winningCombo = combo;
       }
     })
-    return winner
+    return {winner, winningCombo}
   }
 
   const checkDraw = () => {
@@ -71,16 +73,26 @@ const gameController = (function () {
 })()
 
 const domController = (function () {
-  let symbol = 'x'
+  let symbol = 'X'
+  let gameActive = true;
+
+  let gameMessage = document.createElement('p');
+  gameMessage.style.color = "#d8ab8a"
+  gameMessage.style.marginTop = "20px"
 
   const resetDom = () =>
     document
       .querySelectorAll('.game-cell')
-      .forEach((cell) => (cell.textContent = ''))
+      .forEach((cell) => {
+        cell.textContent = ''
+        cell.classList.remove('win')
+        gameMessage.textContent = ""
+      
+      })
 
   document.querySelectorAll('.game-cell').forEach((cell) => {
     cell.addEventListener('click', (e) => {
-      if (e.target.textContent !== '') {
+      if (!gameActive || e.target.textContent !== '') {
         return
       }
 
@@ -94,25 +106,35 @@ const domController = (function () {
       const index = Number(e.target.dataset.cell)
       console.log(index)
       gameBoard.updateCells(symbol, index)
-      let winner = gameController.checkWinner(symbol)
+      let {winner, winningCombo} = gameController.checkWinner(symbol)
       console.log(winner)
-
       const isDraw = gameController.checkDraw()
+      
 
-      setTimeout(() => {
-        if (winner) {
-          alert(`Player ${symbol} win!!`)
-          resetDom()
-          gameBoard.resetBoard()
-          console.log(gameBoard.cells)
-          return
-        } else if (isDraw) {
-          alert('The game is a draw!!')
-          resetDom()
-          gameBoard.resetBoard()
-        }
-        symbol = switchTurn.currSymbol(symbol)
-      }, 100)
+      if(winner) {
+        winningCombo.forEach((index) => {
+          const cell = document.querySelector(`[data-cell="${index}"]`);
+          cell.classList.add("win")
+        })
+        gameMessage.textContent= `player "${symbol}" won the game!!`
+        document.querySelector('.game-status-msg').appendChild(gameMessage)
+        gameActive = false;
+        return
+      }else if(isDraw){
+        gameMessage.textContent= "This game is a draw!!"
+        document.querySelector('.game-status-msg').appendChild(gameMessage)
+        gameActive = false;
+      }
+       symbol = switchTurn.currSymbol(symbol)
+      //restart game
+      const restartBtn = document.querySelector('.restart-btn');
+      restartBtn.addEventListener('click', (e) =>{
+        resetDom()
+        gameBoard.resetBoard()
+        symbol= "X"
+        gameActive = true;
+      })
+
 
       console.log(gameBoard.cells)
     })
