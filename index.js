@@ -77,7 +77,8 @@ const domController = (function () {
   let gameActive = true;
 
   let gameMessage = document.createElement('p');
-  gameMessage.style.color = "#d8ab8a"
+  gameMessage.style.color = "#facc15"
+  gameMessage.style.fontSize = "1.3rem"
   gameMessage.style.marginTop = "20px"
 
   const resetDom = () =>
@@ -98,7 +99,12 @@ const domController = (function () {
 
       const playerSymbol = document.createElement('p')
       playerSymbol.textContent = symbol
-      playerSymbol.style.color = 'white'
+      if(symbol === "X") {
+        playerSymbol.style.color = "#e94560"
+      }else {
+        playerSymbol.style.color = '#08d9d6'
+      }
+      
       playerSymbol.style.fontSize = '3.8rem'
       playerSymbol.style.fontWeight = '500'
       cell.appendChild(playerSymbol)
