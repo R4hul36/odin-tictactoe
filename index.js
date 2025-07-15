@@ -117,6 +117,9 @@ const domController = (function () {
       cell.textContent = ''
       cell.classList.remove('win')
       gameMessage.textContent = ''
+      if (gameMessage.parentNode) {
+      gameMessage.parentNode.removeChild(gameMessage);
+}
   })
 
   //creates each player symbol and styles them, when player clicks on a particular cell
@@ -165,8 +168,10 @@ const domController = (function () {
       
       if (winner) {
         renderWinner(winningCombo)
+        return
       } else if (isDraw) {
         renderDraw()
+        return
       }
       symbol = switchTurn.currSymbol(symbol)
       highlightActivePlayer(symbol)
