@@ -52,17 +52,17 @@ const gameController = (function () {
 
   const checkWinner = (currSymbol) => {
     let winner = false
-    let winningCombo;
+    let winningCombo
     winningCombination.map((combo) => {
       const checkCombo = combo.every(
         (cell) => currentCells[cell] === currSymbol
       )
       if (checkCombo) {
         winner = true
-        winningCombo = combo;
+        winningCombo = combo
       }
     })
-    return {winner, winningCombo}
+    return { winner, winningCombo }
   }
 
   const checkDraw = () => {
@@ -73,38 +73,70 @@ const gameController = (function () {
 })()
 
 const domController = (function () {
-  let symbol = 'X'
-  let gameActive = true;
+  let symbol = ''
+  let gameActive = false
+  const msg = document.querySelector('.game-msg')
 
-  let gameMessage = document.createElement('p');
-  gameMessage.style.color = "#facc15"
-  gameMessage.style.fontSize = "1.3rem"
-  gameMessage.style.marginTop = "20px"
+  function highlightActivePlayer(symbol) {
+    const xBtn = document.getElementById('xSymbol')
+    const oBtn = document.getElementById('oSymbol')
+
+    xBtn.classList.remove('x-active')
+    oBtn.classList.remove('o-active')
+
+    if (symbol === 'X') {
+      xBtn.classList.add('x-active')
+    } else {
+      oBtn.classList.add('o-active')
+    }
+  }
+
+  document.querySelectorAll('.symbol-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      symbol = btn.textContent
+      highlightActivePlayer(symbol)
+      if (gameActive) {
+        btn.disabled = true
+      }
+      console.log(btn.textContent)
+    })
+  })
+
+  let gameMessage = document.createElement('p')
+  gameMessage.style.color = '#facc15'
+  gameMessage.style.fontSize = '1.3rem'
+  gameMessage.style.marginTop = '20px'
 
   const resetDom = () =>
-    document
-      .querySelectorAll('.game-cell')
-      .forEach((cell) => {
-        cell.textContent = ''
-        cell.classList.remove('win')
-        gameMessage.textContent = ""
-      
-      })
+    document.querySelectorAll('.game-cell').forEach((cell) => {
+      cell.textContent = ''
+      cell.classList.remove('win')
+      gameMessage.textContent = ''
+    })
 
   document.querySelectorAll('.game-cell').forEach((cell) => {
     cell.addEventListener('click', (e) => {
+      if (symbol) {
+        gameActive = true
+        if (gameActive) {
+          msg.style.display = 'none'
+        }
+        document.querySelectorAll('.symbol-btn').forEach((btn) => {
+          btn.disabled = true
+        })
+      }
       if (!gameActive || e.target.textContent !== '') {
         return
       }
 
       const playerSymbol = document.createElement('p')
       playerSymbol.textContent = symbol
-      if(symbol === "X") {
-        playerSymbol.style.color = "#e94560"
-      }else {
+      if (symbol === 'X') {
+        playerSymbol.style.color = '#e94560'
+      } else {
         playerSymbol.style.color = '#08d9d6'
       }
-      
+
       playerSymbol.style.fontSize = '3.8rem'
       playerSymbol.style.fontWeight = '500'
       cell.appendChild(playerSymbol)
@@ -112,37 +144,41 @@ const domController = (function () {
       const index = Number(e.target.dataset.cell)
       console.log(index)
       gameBoard.updateCells(symbol, index)
-      let {winner, winningCombo} = gameController.checkWinner(symbol)
+      let { winner, winningCombo } = gameController.checkWinner(symbol)
       console.log(winner)
       const isDraw = gameController.checkDraw()
-      
 
-      if(winner) {
+      if (winner) {
         winningCombo.forEach((index) => {
-          const cell = document.querySelector(`[data-cell="${index}"]`);
-          cell.classList.add("win")
+          const cell = document.querySelector(`[data-cell="${index}"]`)
+          cell.classList.add('win')
         })
-        gameMessage.textContent= `player "${symbol}" won the game!!`
+        gameMessage.textContent = `player "${symbol}" won the game!!`
         document.querySelector('.game-status-msg').appendChild(gameMessage)
-        gameActive = false;
+        gameActive = false
+        symbol = ''
         return
-      }else if(isDraw){
-        gameMessage.textContent= "This game is a draw!!"
+      } else if (isDraw) {
+        gameMessage.textContent = 'This game is a draw!!'
         document.querySelector('.game-status-msg').appendChild(gameMessage)
-        gameActive = false;
+        gameActive = false
+        symbol = ''
       }
-       symbol = switchTurn.currSymbol(symbol)
-      //restart game
-      const restartBtn = document.querySelector('.restart-btn');
-      restartBtn.addEventListener('click', (e) =>{
-        resetDom()
-        gameBoard.resetBoard()
-        symbol= "X"
-        gameActive = true;
-      })
-
+      symbol = switchTurn.currSymbol(symbol)
+      highlightActivePlayer(symbol)
 
       console.log(gameBoard.cells)
+    })
+  })
+
+  const restartBtn = document.querySelector('.restart-btn')
+  restartBtn.addEventListener('click', (e) => {
+    resetDom()
+    gameBoard.resetBoard()
+
+    msg.style.display = 'block'
+    document.querySelectorAll('.symbol-btn').forEach((btn) => {
+      btn.disabled = false
     })
   })
 })()
